@@ -10,6 +10,7 @@ class Summary:
     minimum: float
     median: float
     mean: float
+    median_absolute_deviation: float
     p95: float
     maximum: float
 
@@ -26,11 +27,15 @@ def _samples(values: Iterable[float]) -> list[float]:
 def summarize(values: Iterable[float]) -> Summary:
     samples = _samples(values)
     p95_index = ceil(0.95 * len(samples)) - 1
+    sample_median = median(samples)
     return Summary(
         count=len(samples),
         minimum=samples[0],
-        median=median(samples),
+        median=sample_median,
         mean=fmean(samples),
+        median_absolute_deviation=median(
+            abs(sample - sample_median) for sample in samples
+        ),
         p95=samples[p95_index],
         maximum=samples[-1],
     )
@@ -41,4 +46,3 @@ def compare(baseline: Summary, candidate: Summary) -> float:
     if baseline.median == 0:
         raise ValueError("baseline median must be greater than zero")
     return candidate.median / baseline.median - 1
-
