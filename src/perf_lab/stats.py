@@ -15,6 +15,16 @@ class Summary:
     maximum: float
 
 
+@dataclass(frozen=True)
+class Comparison:
+    baseline_median: float
+    candidate_median: float
+    absolute_change: float
+    relative_change: float
+    practical_threshold: float
+    outcome: str
+
+
 def _samples(values: Iterable[float]) -> list[float]:
     result = [float(value) for value in values]
     if not result:
@@ -46,3 +56,29 @@ def compare(baseline: Summary, candidate: Summary) -> float:
     if baseline.median == 0:
         raise ValueError("baseline median must be greater than zero")
     return candidate.median / baseline.median - 1
+
+
+def compare_summaries(
+    baseline: Summary,
+    candidate: Summary,
+    *,
+    practical_threshold: float = 0.05,
+) -> Comparison:
+    """Classify median movement against a caller-chosen practical threshold."""
+    if not isfinite(practical_threshold) or practical_threshold < 0:
+        raise ValueError("practical_threshold must be finite and non-negative")
+    relative_change = compare(baseline, candidate)
+    if relative_change > practical_threshold:
+        outcome = "slower"
+    elif relative_change < -practical_threshold:
+        outcome = "faster"
+    else:
+        outcome = "no_material_change"
+    return Comparison(
+        baseline.median,
+        candidate.median,
+        candidate.median - baseline.median,
+        relative_change,
+        practical_threshold,
+        outcome,
+    )

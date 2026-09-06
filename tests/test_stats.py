@@ -1,6 +1,6 @@
 import unittest
 
-from perf_lab import compare, summarize
+from perf_lab import compare, compare_summaries, summarize
 
 
 class SummaryTests(unittest.TestCase):
@@ -27,6 +27,23 @@ class SummaryTests(unittest.TestCase):
     def test_median_absolute_deviation_resists_outlier(self) -> None:
         result = summarize([10, 10, 11, 11, 1000])
         self.assertEqual(result.median_absolute_deviation, 1)
+
+    def test_classifies_practical_median_change(self) -> None:
+        baseline = summarize([100, 100, 100])
+        slower = compare_summaries(
+            baseline, summarize([110, 110, 110]), practical_threshold=0.05
+        )
+        similar = compare_summaries(
+            baseline, summarize([103, 103, 103]), practical_threshold=0.05
+        )
+        self.assertEqual(slower.outcome, "slower")
+        self.assertAlmostEqual(slower.relative_change, 0.1)
+        self.assertEqual(similar.outcome, "no_material_change")
+
+    def test_validates_practical_threshold(self) -> None:
+        summary = summarize([1])
+        with self.assertRaises(ValueError):
+            compare_summaries(summary, summary, practical_threshold=-0.1)
 
 
 if __name__ == "__main__":

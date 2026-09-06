@@ -12,3 +12,7 @@ python -m perf_lab 0.101 0.099 0.105 0.100
 
 All input values must use the same unit. Percentiles use the nearest-rank
 definition, which keeps results deterministic for small benchmark samples.
+
+`compare_summaries` can label median movement as `faster`, `slower`, or
+`no_material_change` using a caller-selected practical threshold. This is an
+effect-size rule, not a statistical significance test.
