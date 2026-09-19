@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from math import ceil, isfinite
 from statistics import fmean, median
-from typing import Iterable
+from typing import Iterable, Optional
 
 
 @dataclass(frozen=True)
@@ -11,6 +11,7 @@ class Summary:
     median: float
     mean: float
     median_absolute_deviation: float
+    relative_median_absolute_deviation: Optional[float]
     p95: float
     maximum: float
 
@@ -38,13 +39,19 @@ def summarize(values: Iterable[float]) -> Summary:
     samples = _samples(values)
     p95_index = ceil(0.95 * len(samples)) - 1
     sample_median = median(samples)
+    median_absolute_deviation = median(
+        abs(sample - sample_median) for sample in samples
+    )
     return Summary(
         count=len(samples),
         minimum=samples[0],
         median=sample_median,
         mean=fmean(samples),
-        median_absolute_deviation=median(
-            abs(sample - sample_median) for sample in samples
+        median_absolute_deviation=median_absolute_deviation,
+        relative_median_absolute_deviation=(
+            median_absolute_deviation / sample_median
+            if sample_median > 0
+            else None
         ),
         p95=samples[p95_index],
         maximum=samples[-1],

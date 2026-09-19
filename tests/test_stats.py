@@ -11,6 +11,7 @@ class SummaryTests(unittest.TestCase):
         self.assertEqual(result.median, 2.5)
         self.assertEqual(result.mean, 2.5)
         self.assertEqual(result.median_absolute_deviation, 1.0)
+        self.assertEqual(result.relative_median_absolute_deviation, 0.4)
         self.assertEqual(result.p95, 4)
         self.assertEqual(result.maximum, 4)
 
@@ -27,6 +28,10 @@ class SummaryTests(unittest.TestCase):
     def test_median_absolute_deviation_resists_outlier(self) -> None:
         result = summarize([10, 10, 11, 11, 1000])
         self.assertEqual(result.median_absolute_deviation, 1)
+
+    def test_relative_dispersion_is_undefined_for_zero_median(self) -> None:
+        result = summarize([0, 0, 1])
+        self.assertIsNone(result.relative_median_absolute_deviation)
 
     def test_classifies_practical_median_change(self) -> None:
         baseline = summarize([100, 100, 100])
