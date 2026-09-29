@@ -24,6 +24,10 @@ class Comparison:
     relative_change: float
     practical_threshold: float
     outcome: str
+    baseline_p95: float
+    candidate_p95: float
+    p95_absolute_change: float
+    p95_relative_change: float
 
 
 def _samples(values: Iterable[float]) -> list[float]:
@@ -88,4 +92,8 @@ def compare_summaries(
         relative_change,
         practical_threshold,
         outcome,
+        baseline.p95,
+        candidate.p95,
+        candidate.p95 - baseline.p95,
+        candidate.p95 / baseline.p95 - 1,
     )

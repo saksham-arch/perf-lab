@@ -34,15 +34,19 @@ class SummaryTests(unittest.TestCase):
         self.assertIsNone(result.relative_median_absolute_deviation)
 
     def test_classifies_practical_median_change(self) -> None:
-        baseline = summarize([100, 100, 100])
+        baseline = summarize([100, 100, 100, 120])
         slower = compare_summaries(
-            baseline, summarize([110, 110, 110]), practical_threshold=0.05
+            baseline, summarize([110, 110, 110, 150]), practical_threshold=0.05
         )
         similar = compare_summaries(
-            baseline, summarize([103, 103, 103]), practical_threshold=0.05
+            baseline, summarize([103, 103, 103, 120]), practical_threshold=0.05
         )
         self.assertEqual(slower.outcome, "slower")
         self.assertAlmostEqual(slower.relative_change, 0.1)
+        self.assertEqual(slower.baseline_p95, 120)
+        self.assertEqual(slower.candidate_p95, 150)
+        self.assertEqual(slower.p95_absolute_change, 30)
+        self.assertAlmostEqual(slower.p95_relative_change, 0.25)
         self.assertEqual(similar.outcome, "no_material_change")
 
     def test_validates_practical_threshold(self) -> None:

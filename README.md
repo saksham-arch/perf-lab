@@ -17,5 +17,7 @@ different timing scales. It is reported as `null` when the median is zero,
 where that ratio is undefined.
 
 `compare_summaries` can label median movement as `faster`, `slower`, or
-`no_material_change` using a caller-selected practical threshold. This is an
-effect-size rule, not a statistical significance test.
+`no_material_change` using a caller-selected practical threshold. It also
+reports the absolute and relative p95 movement so tail behavior is not hidden
+by the median. The label still uses only the median threshold; both changes are
+descriptive effect sizes, not statistical significance tests.
