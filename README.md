@@ -19,5 +19,7 @@ where that ratio is undefined.
 `compare_summaries` can label median movement as `faster`, `slower`, or
 `no_material_change` using a caller-selected practical threshold. It also
 reports the absolute and relative p95 movement so tail behavior is not hidden
-by the median. The label still uses only the median threshold; both changes are
-descriptive effect sizes, not statistical significance tests.
+by the median. Median and p95 movement receive separate outcomes using the same
+practical threshold, so a stable median cannot hide a tail regression. Both
+labels are descriptive effect-size rules, not statistical significance tests;
+nearest-rank p95 remains sensitive to sample count and workload composition.

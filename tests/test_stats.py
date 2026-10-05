@@ -47,7 +47,18 @@ class SummaryTests(unittest.TestCase):
         self.assertEqual(slower.candidate_p95, 150)
         self.assertEqual(slower.p95_absolute_change, 30)
         self.assertAlmostEqual(slower.p95_relative_change, 0.25)
+        self.assertEqual(slower.p95_outcome, "slower")
         self.assertEqual(similar.outcome, "no_material_change")
+
+    def test_classifies_tail_change_separately_from_median(self) -> None:
+        baseline = summarize([100, 100, 100, 120])
+        comparison = compare_summaries(
+            baseline,
+            summarize([102, 102, 102, 150]),
+            practical_threshold=0.05,
+        )
+        self.assertEqual(comparison.outcome, "no_material_change")
+        self.assertEqual(comparison.p95_outcome, "slower")
 
     def test_validates_practical_threshold(self) -> None:
         summary = summarize([1])

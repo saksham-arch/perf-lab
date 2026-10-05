@@ -28,6 +28,7 @@ class Comparison:
     candidate_p95: float
     p95_absolute_change: float
     p95_relative_change: float
+    p95_outcome: str
 
 
 def _samples(values: Iterable[float]) -> list[float]:
@@ -69,6 +70,14 @@ def compare(baseline: Summary, candidate: Summary) -> float:
     return candidate.median / baseline.median - 1
 
 
+def _classify_change(relative_change: float, practical_threshold: float) -> str:
+    if relative_change > practical_threshold:
+        return "slower"
+    if relative_change < -practical_threshold:
+        return "faster"
+    return "no_material_change"
+
+
 def compare_summaries(
     baseline: Summary,
     candidate: Summary,
@@ -79,21 +88,17 @@ def compare_summaries(
     if not isfinite(practical_threshold) or practical_threshold < 0:
         raise ValueError("practical_threshold must be finite and non-negative")
     relative_change = compare(baseline, candidate)
-    if relative_change > practical_threshold:
-        outcome = "slower"
-    elif relative_change < -practical_threshold:
-        outcome = "faster"
-    else:
-        outcome = "no_material_change"
+    p95_relative_change = candidate.p95 / baseline.p95 - 1
     return Comparison(
         baseline.median,
         candidate.median,
         candidate.median - baseline.median,
         relative_change,
         practical_threshold,
-        outcome,
+        _classify_change(relative_change, practical_threshold),
         baseline.p95,
         candidate.p95,
         candidate.p95 - baseline.p95,
-        candidate.p95 / baseline.p95 - 1,
+        p95_relative_change,
+        _classify_change(p95_relative_change, practical_threshold),
     )
