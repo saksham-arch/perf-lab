@@ -41,6 +41,9 @@ class SummaryTests(unittest.TestCase):
         similar = compare_summaries(
             baseline, summarize([103, 103, 103, 120]), practical_threshold=0.05
         )
+        self.assertEqual(slower.baseline_count, 4)
+        self.assertEqual(slower.candidate_count, 4)
+        self.assertEqual(slower.sample_count_ratio, 1.0)
         self.assertEqual(slower.outcome, "slower")
         self.assertAlmostEqual(slower.relative_change, 0.1)
         self.assertEqual(slower.baseline_p95, 120)
@@ -59,6 +62,16 @@ class SummaryTests(unittest.TestCase):
         )
         self.assertEqual(comparison.outcome, "no_material_change")
         self.assertEqual(comparison.p95_outcome, "slower")
+
+    def test_comparison_reports_sample_count_imbalance(self) -> None:
+        comparison = compare_summaries(
+            summarize([10, 10]),
+            summarize([11, 11, 11]),
+        )
+
+        self.assertEqual(comparison.baseline_count, 2)
+        self.assertEqual(comparison.candidate_count, 3)
+        self.assertEqual(comparison.sample_count_ratio, 1.5)
 
     def test_validates_practical_threshold(self) -> None:
         summary = summarize([1])

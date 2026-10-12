@@ -18,6 +18,9 @@ class Summary:
 
 @dataclass(frozen=True)
 class Comparison:
+    baseline_count: int
+    candidate_count: int
+    sample_count_ratio: float
     baseline_median: float
     candidate_median: float
     absolute_change: float
@@ -90,6 +93,9 @@ def compare_summaries(
     relative_change = compare(baseline, candidate)
     p95_relative_change = candidate.p95 / baseline.p95 - 1
     return Comparison(
+        baseline.count,
+        candidate.count,
+        candidate.count / baseline.count,
         baseline.median,
         candidate.median,
         candidate.median - baseline.median,

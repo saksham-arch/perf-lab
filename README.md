@@ -23,3 +23,7 @@ by the median. Median and p95 movement receive separate outcomes using the same
 practical threshold, so a stable median cannot hide a tail regression. Both
 labels are descriptive effect-size rules, not statistical significance tests;
 nearest-rank p95 remains sensitive to sample count and workload composition.
+Comparisons retain both sample counts and report candidate-to-baseline
+`sample_count_ratio`. Unequal counts are not automatically invalid, but the
+imbalance is visible because it can change percentile resolution and confidence
+in the observed summaries.
