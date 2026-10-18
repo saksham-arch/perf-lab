@@ -32,6 +32,9 @@ class Comparison:
     p95_absolute_change: float
     p95_relative_change: float
     p95_outcome: str
+    baseline_relative_median_absolute_deviation: Optional[float]
+    candidate_relative_median_absolute_deviation: Optional[float]
+    relative_median_absolute_deviation_difference: Optional[float]
 
 
 def _samples(values: Iterable[float]) -> list[float]:
@@ -92,6 +95,13 @@ def compare_summaries(
         raise ValueError("practical_threshold must be finite and non-negative")
     relative_change = compare(baseline, candidate)
     p95_relative_change = candidate.p95 / baseline.p95 - 1
+    dispersion_difference = (
+        candidate.relative_median_absolute_deviation
+        - baseline.relative_median_absolute_deviation
+        if baseline.relative_median_absolute_deviation is not None
+        and candidate.relative_median_absolute_deviation is not None
+        else None
+    )
     return Comparison(
         baseline.count,
         candidate.count,
@@ -107,4 +117,7 @@ def compare_summaries(
         candidate.p95 - baseline.p95,
         p95_relative_change,
         _classify_change(p95_relative_change, practical_threshold),
+        baseline.relative_median_absolute_deviation,
+        candidate.relative_median_absolute_deviation,
+        dispersion_difference,
     )

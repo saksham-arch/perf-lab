@@ -51,6 +51,18 @@ class SummaryTests(unittest.TestCase):
         self.assertEqual(slower.p95_absolute_change, 30)
         self.assertAlmostEqual(slower.p95_relative_change, 0.25)
         self.assertEqual(slower.p95_outcome, "slower")
+        self.assertEqual(
+            slower.baseline_relative_median_absolute_deviation,
+            0,
+        )
+        self.assertEqual(
+            slower.candidate_relative_median_absolute_deviation,
+            0,
+        )
+        self.assertEqual(
+            slower.relative_median_absolute_deviation_difference,
+            0,
+        )
         self.assertEqual(similar.outcome, "no_material_change")
 
     def test_classifies_tail_change_separately_from_median(self) -> None:
@@ -72,6 +84,27 @@ class SummaryTests(unittest.TestCase):
         self.assertEqual(comparison.baseline_count, 2)
         self.assertEqual(comparison.candidate_count, 3)
         self.assertEqual(comparison.sample_count_ratio, 1.5)
+
+    def test_comparison_reports_relative_dispersion_difference(self) -> None:
+        comparison = compare_summaries(
+            summarize([10, 10, 10]),
+            summarize([10, 12, 14]),
+        )
+
+        self.assertEqual(
+            comparison.relative_median_absolute_deviation_difference,
+            1 / 6,
+        )
+
+    def test_dispersion_difference_is_missing_when_ratio_is_undefined(self) -> None:
+        comparison = compare_summaries(
+            summarize([1, 1, 1]),
+            summarize([0, 0, 0]),
+        )
+
+        self.assertIsNone(
+            comparison.relative_median_absolute_deviation_difference
+        )
 
     def test_validates_practical_threshold(self) -> None:
         summary = summarize([1])

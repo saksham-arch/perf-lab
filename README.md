@@ -26,4 +26,7 @@ nearest-rank p95 remains sensitive to sample count and workload composition.
 Comparisons retain both sample counts and report candidate-to-baseline
 `sample_count_ratio`. Unequal counts are not automatically invalid, but the
 imbalance is visible because it can change percentile resolution and confidence
-in the observed summaries.
+in the observed summaries. They also retain both relative MAD values and their
+candidate-minus-baseline difference. A positive dispersion difference means
+the candidate samples varied more relative to their median; it is not a
+significance test and is `null` when either median is zero.
