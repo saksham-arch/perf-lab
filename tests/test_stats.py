@@ -12,6 +12,10 @@ class SummaryTests(unittest.TestCase):
         self.assertEqual(result.mean, 2.5)
         self.assertEqual(result.median_absolute_deviation, 1.0)
         self.assertEqual(result.relative_median_absolute_deviation, 0.4)
+        self.assertEqual(result.first_quartile, 1)
+        self.assertEqual(result.third_quartile, 3)
+        self.assertEqual(result.interquartile_range, 2)
+        self.assertEqual(result.relative_interquartile_range, 0.8)
         self.assertEqual(result.p95, 4)
         self.assertEqual(result.maximum, 4)
 
@@ -32,6 +36,14 @@ class SummaryTests(unittest.TestCase):
     def test_relative_dispersion_is_undefined_for_zero_median(self) -> None:
         result = summarize([0, 0, 1])
         self.assertIsNone(result.relative_median_absolute_deviation)
+        self.assertIsNone(result.relative_interquartile_range)
+
+    def test_interquartile_range_resists_extreme_sample(self) -> None:
+        result = summarize([10, 10, 11, 12, 1000])
+
+        self.assertEqual(result.first_quartile, 10)
+        self.assertEqual(result.third_quartile, 12)
+        self.assertEqual(result.interquartile_range, 2)
 
     def test_classifies_practical_median_change(self) -> None:
         baseline = summarize([100, 100, 100, 120])

@@ -1,13 +1,14 @@
 # perf-lab
 
 Small, dependency-free building blocks for analyzing repeatable performance
-experiments. It summarizes timing samples with median, mean, nearest-rank p95,
-median absolute deviation (MAD), and relative MAD, and compares a candidate
-run with a baseline without claiming statistical significance.
+experiments. It summarizes timing samples with median, mean, nearest-rank
+quartiles and p95, median absolute deviation (MAD), and relative dispersion,
+and compares a candidate run with a baseline without claiming statistical
+significance.
 
 ```bash
-python -m unittest discover -s tests
-python -m perf_lab 0.101 0.099 0.105 0.100
+PYTHONPATH=src python3 -m unittest discover -s tests
+PYTHONPATH=src python3 -m perf_lab 0.101 0.099 0.105 0.100
 ```
 
 All input values must use the same unit. Percentiles use the nearest-rank
@@ -15,6 +16,11 @@ definition, which keeps results deterministic for small benchmark samples.
 Relative MAD divides MAD by the median so dispersion can be compared across
 different timing scales. It is reported as `null` when the median is zero,
 where that ratio is undefined.
+The interquartile range (IQR) is the nearest-rank third quartile minus the first
+quartile. Relative IQR divides that spread by the median and is `null` when the
+median is zero. IQR describes the central half of the observed samples and can
+hide important tail behavior, so inspect it alongside p95, extrema, and raw
+measurements rather than treating it as a stability guarantee.
 
 `compare_summaries` can label median movement as `faster`, `slower`, or
 `no_material_change` using a caller-selected practical threshold. It also

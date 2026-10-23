@@ -12,6 +12,10 @@ class Summary:
     mean: float
     median_absolute_deviation: float
     relative_median_absolute_deviation: Optional[float]
+    first_quartile: float
+    third_quartile: float
+    interquartile_range: float
+    relative_interquartile_range: Optional[float]
     p95: float
     maximum: float
 
@@ -49,6 +53,8 @@ def _samples(values: Iterable[float]) -> list[float]:
 def summarize(values: Iterable[float]) -> Summary:
     samples = _samples(values)
     p95_index = ceil(0.95 * len(samples)) - 1
+    first_quartile = samples[ceil(0.25 * len(samples)) - 1]
+    third_quartile = samples[ceil(0.75 * len(samples)) - 1]
     sample_median = median(samples)
     median_absolute_deviation = median(
         abs(sample - sample_median) for sample in samples
@@ -61,6 +67,14 @@ def summarize(values: Iterable[float]) -> Summary:
         median_absolute_deviation=median_absolute_deviation,
         relative_median_absolute_deviation=(
             median_absolute_deviation / sample_median
+            if sample_median > 0
+            else None
+        ),
+        first_quartile=first_quartile,
+        third_quartile=third_quartile,
+        interquartile_range=third_quartile - first_quartile,
+        relative_interquartile_range=(
+            (third_quartile - first_quartile) / sample_median
             if sample_median > 0
             else None
         ),
