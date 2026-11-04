@@ -108,6 +108,16 @@ class SummaryTests(unittest.TestCase):
             1 / 6,
         )
 
+    def test_comparison_reports_change_in_central_spread(self) -> None:
+        comparison = compare_summaries(
+            summarize([10, 10, 11, 12, 1000]),
+            summarize([10, 10, 11, 20, 1000]),
+        )
+
+        self.assertEqual(comparison.baseline_interquartile_range, 2)
+        self.assertEqual(comparison.candidate_interquartile_range, 10)
+        self.assertEqual(comparison.interquartile_range_difference, 8)
+
     def test_dispersion_difference_is_missing_when_ratio_is_undefined(self) -> None:
         comparison = compare_summaries(
             summarize([1, 1, 1]),

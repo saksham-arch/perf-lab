@@ -39,6 +39,9 @@ class Comparison:
     baseline_relative_median_absolute_deviation: Optional[float]
     candidate_relative_median_absolute_deviation: Optional[float]
     relative_median_absolute_deviation_difference: Optional[float]
+    baseline_interquartile_range: float
+    candidate_interquartile_range: float
+    interquartile_range_difference: float
 
 
 def _samples(values: Iterable[float]) -> list[float]:
@@ -134,4 +137,7 @@ def compare_summaries(
         baseline.relative_median_absolute_deviation,
         candidate.relative_median_absolute_deviation,
         dispersion_difference,
+        baseline.interquartile_range,
+        candidate.interquartile_range,
+        candidate.interquartile_range - baseline.interquartile_range,
     )

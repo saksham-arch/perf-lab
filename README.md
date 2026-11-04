@@ -36,3 +36,6 @@ in the observed summaries. They also retain both relative MAD values and their
 candidate-minus-baseline difference. A positive dispersion difference means
 the candidate samples varied more relative to their median; it is not a
 significance test and is `null` when either median is zero.
+Comparisons also include both interquartile ranges and their difference in the
+input unit. This shows whether the central half of observed timings widened or
+narrowed; it does not account for tail changes or establish significance.
